@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import AdminTable from "@/components/AdminTable";
 
 type Booking = {
   id: string;
@@ -87,7 +88,11 @@ export default function AdminPage() {
           inset: 0;
           background-image:
             linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0.03) 1px,
+              transparent 1px
+            );
           background-size: 56px 56px;
           mask-image: radial-gradient(circle at center, black 45%, transparent 90%);
           pointer-events: none;
@@ -290,79 +295,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {bookings.length === 0 ? (
-              <div
-                className="glass-card"
-                style={{
-                  borderRadius: 22,
-                  padding: 20,
-                  color: "rgba(255,255,255,0.7)",
-                }}
-              >
-                No bookings yet. Submit a request from the booking page to
-                populate the dashboard.
-              </div>
-            ) : (
-              <div
-                style={{
-                  overflowX: "auto",
-                }}
-              >
-                <table
-                  style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    minWidth: 860,
-                  }}
-                >
-                  <thead>
-                    <tr
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                      }}
-                    >
-                      <Th>Name</Th>
-                      <Th>Email</Th>
-                      <Th>Service</Th>
-                      <Th>Requested Time</Th>
-                      <Th>Created</Th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.map((booking) => (
-                      <motion.tr
-                        key={booking.id}
-                        whileHover={{
-                          backgroundColor: "rgba(255,255,255,0.035)",
-                        }}
-                        transition={{ duration: 0.18 }}
-                      >
-                        <Td strong>{booking.name}</Td>
-                        <Td>{booking.email}</Td>
-                        <Td>
-                          <span
-                            style={{
-                              display: "inline-block",
-                              padding: "8px 12px",
-                              borderRadius: 999,
-                              background: "rgba(99,102,241,0.14)",
-                              border: "1px solid rgba(99,102,241,0.25)",
-                              color: "#c7d2fe",
-                              fontWeight: 700,
-                              fontSize: 12,
-                            }}
-                          >
-                            {booking.service}
-                          </span>
-                        </Td>
-                        <Td>{formatDisplayDate(booking.datetime)}</Td>
-                        <Td>{new Date(booking.created_at).toLocaleString()}</Td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <AdminTable bookings={bookings} />
           </motion.div>
         </div>
       </section>
@@ -409,52 +342,4 @@ function StatCard({
       </h3>
     </motion.div>
   );
-}
-
-function Th({ children }: { children: React.ReactNode }) {
-  return (
-    <th
-      style={{
-        textAlign: "left",
-        padding: "14px 16px",
-        fontSize: 12,
-        color: "rgba(255,255,255,0.55)",
-        textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
-        fontWeight: 700,
-      }}
-    >
-      {children}
-    </th>
-  );
-}
-
-function Td({
-  children,
-  strong = false,
-}: {
-  children: React.ReactNode;
-  strong?: boolean;
-}) {
-  return (
-    <td
-      style={{
-        padding: "16px",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        color: strong ? "rgba(255,255,255,0.96)" : "rgba(255,255,255,0.72)",
-        fontWeight: strong ? 700 : 500,
-        fontSize: 14,
-        verticalAlign: "middle",
-      }}
-    >
-      {children}
-    </td>
-  );
-}
-
-function formatDisplayDate(value: string) {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
-  return parsed.toLocaleString();
 }
