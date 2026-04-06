@@ -1,16 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
 import ServicesSection from "@/components/ServicesSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
-import ContactSection from "@/components/ContactSection";
 import CTA from "@/components/CTA";
+import ContactSection from "@/components/ContactSection";
+
 export default function Home() {
   return (
-    <main className="bg-gray-50 min-h-screen text-gray-900">
-     <Navbar />
+    <main className="min-h-screen bg-white text-gray-900 transition-colors dark:bg-[#111317] dark:text-[#f3f4f6]">
+      <Navbar />
       <Hero />
-      <Features />
       <ServicesSection />
       <WhyChooseUs />
       <CTA />

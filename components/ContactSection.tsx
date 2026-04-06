@@ -1,30 +1,30 @@
 export default function ContactSection() {
   return (
-    <section id="contact" className="max-w-6xl mx-auto px-4 py-16">
-      <h2 className="text-2xl font-semibold mb-6">Contact</h2>
+    <section id="contact" className="mx-auto max-w-6xl px-4 py-16">
+      <h2 className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+        Contact
+      </h2>
 
-      <div className="space-y-3 text-gray-600 text-sm">
-        
+      <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
         <p>
-          Email:{" "}
+          Email{" "}
           <a
             href="mailto:contact@brightnestcleaning.com"
-            className="text-black underline"
+            className="text-gray-900 underline dark:text-white"
           >
             contact@brightnestcleaning.com
           </a>
         </p>
 
         <p>
-          Phone:{" "}
+          Phone{" "}
           <a
             href="tel:1234567890"
-            className="text-black underline"
+            className="text-gray-900 underline dark:text-white"
           >
             (123) 456-7890
           </a>
         </p>
-
       </div>
     </section>
   );

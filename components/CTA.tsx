@@ -1,10 +1,9 @@
 export default function CTA() {
   return (
-    <section className="bg-green-600 text-white py-16">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-        
+    <section className="bg-green-600 py-16 text-white">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 md:flex-row">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">
+          <h2 className="mb-2 text-2xl font-semibold">
             Ready to book your cleaning?
           </h2>
           <p className="text-sm text-green-100">
@@ -14,11 +13,10 @@ export default function CTA() {
 
         <a
           href="/book"
-          className="bg-white text-green-600 px-6 py-3 rounded-xl text-sm font-medium hover:opacity-90 transition"
+          className="rounded-xl bg-white px-6 py-3 text-sm font-medium text-green-600 transition hover:opacity-90 dark:bg-[#f3f4f6]"
         >
           Book a Cleaning
         </a>
-
       </div>
     </section>
   );
