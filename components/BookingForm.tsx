@@ -54,7 +54,7 @@ export default function BookingForm({
         placeholder="Full name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors placeholder:text-gray-400 dark:border-white/10 dark:bg-[#20252d] dark:text-white dark:placeholder:text-gray-500"
         required
       />
 
@@ -63,7 +63,7 @@ export default function BookingForm({
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors placeholder:text-gray-400 dark:border-white/10 dark:bg-[#20252d] dark:text-white dark:placeholder:text-gray-500"
         required
       />
 
@@ -72,14 +72,14 @@ export default function BookingForm({
         placeholder="Address"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors placeholder:text-gray-400 dark:border-white/10 dark:bg-[#20252d] dark:text-white dark:placeholder:text-gray-500"
         required
       />
 
       <select
         value={service}
         onChange={(e) => setService(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors dark:border-white/10 dark:bg-[#20252d] dark:text-white"
         required
       >
         <option value="">Select service</option>
@@ -91,7 +91,7 @@ export default function BookingForm({
       <select
         value={homeSize}
         onChange={(e) => setHomeSize(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors dark:border-white/10 dark:bg-[#20252d] dark:text-white"
         required
       >
         <option value="">Home size</option>
@@ -104,20 +104,24 @@ export default function BookingForm({
         type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors dark:border-white/10 dark:bg-[#20252d] dark:text-white"
         required
       />
 
       <div>
-        <p className="mb-2 text-sm">Select time</p>
+        <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">
+          Select time
+        </p>
         <div className="grid grid-cols-3 gap-2">
           {timeSlots.map((slot) => (
             <button
               type="button"
               key={slot}
               onClick={() => setTime(slot)}
-              className={`rounded-lg border py-2 text-sm ${
-                time === slot ? "bg-green-600 text-white" : "bg-white"
+              className={`rounded-lg border py-2 text-sm transition-colors ${
+                time === slot
+                  ? "border-green-600 bg-green-600 text-white"
+                  : "border-gray-300 bg-white text-gray-700 dark:border-white/10 dark:bg-[#20252d] dark:text-gray-200"
               }`}
             >
               {slot}
@@ -130,13 +134,13 @@ export default function BookingForm({
         placeholder="Notes"
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        className="rounded-xl border border-gray-300 px-4 py-3"
+        className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition-colors placeholder:text-gray-400 dark:border-white/10 dark:bg-[#20252d] dark:text-white dark:placeholder:text-gray-500"
         rows={4}
       />
 
       <button
         type="submit"
-        className="rounded-xl bg-green-600 py-3 text-white"
+        className="rounded-xl bg-green-600 py-3 text-white transition hover:bg-green-700"
       >
         Submit Booking
       </button>
