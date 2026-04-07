@@ -27,13 +27,13 @@ type Booking = {
   status: BookingStatus;
 };
 
-const mockBookings: Booking[] = [
+const initialBookings: Booking[] = [
   {
     id: "1",
     customerName: "Jane Smith",
     email: "jane.smith@email.com",
     phone: "4695550101",
-    address: "1208 Brookstone Dr, McKinney, TX 75071",
+    address: "1208 Brookstone Dr, McKinney, TX",
     serviceType: "Deep Cleaning",
     homeSize: "Medium",
     priceEstimate: 210,
@@ -46,7 +46,7 @@ const mockBookings: Booking[] = [
     customerName: "Marcus Lee",
     email: "marcus.lee@email.com",
     phone: "2145550142",
-    address: "905 Cedar Elm Ln, Frisco, TX 75036",
+    address: "905 Cedar Elm Ln, Frisco, TX",
     serviceType: "Standard Cleaning",
     homeSize: "Small",
     priceEstimate: 90,
@@ -59,26 +59,13 @@ const mockBookings: Booking[] = [
     customerName: "Olivia Carter",
     email: "olivia.carter@email.com",
     phone: "9725550198",
-    address: "4301 Stone Hollow Way, Allen, TX 75013",
+    address: "4301 Stone Hollow Way, Allen, TX",
     serviceType: "Move-Out Cleaning",
     homeSize: "Large",
     priceEstimate: 340,
     date: "2026-04-12",
     time: "2:00 PM",
     status: "completed",
-  },
-  {
-    id: "4",
-    customerName: "David Brooks",
-    email: "david.brooks@email.com",
-    phone: "4695550177",
-    address: "2210 Windcrest Ct, Plano, TX 75025",
-    serviceType: "Deep Cleaning",
-    homeSize: "Large",
-    priceEstimate: 290,
-    date: "2026-04-13",
-    time: "3:30 PM",
-    status: "cancelled",
   },
 ];
 
@@ -95,57 +82,60 @@ function statusClasses(status: BookingStatus) {
   }
 }
 
-function formatPhone(phone: string) {
-  if (phone.length === 10) {
-    return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6)}`;
-  }
-  return phone;
-}
-
 function mapsLink(address: string) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     address
   )}`;
 }
 
-function BookingCard({ booking }: { booking: Booking }) {
+function BookingCard({
+  booking,
+  onUpdateStatus,
+}: {
+  booking: Booking;
+  onUpdateStatus: (id: string, status: BookingStatus) => void;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copyEmail() {
-    try {
-      await navigator.clipboard.writeText(booking.email);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } catch {}
+    await navigator.clipboard.writeText(booking.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
   }
 
+  const isInactive =
+    booking.status === "completed" || booking.status === "cancelled";
+
   return (
-    <article className="rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] p-5">
-      <div className="flex items-start justify-between gap-4">
+    <article
+      className={`rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] p-5 transition ${
+        isInactive ? "opacity-60" : ""
+      }`}
+    >
+      <div className="flex items-start justify-between">
         <div>
           <h3 className="text-lg font-semibold text-white">
             {booking.customerName}
           </h3>
 
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-400">
-            <div className="flex items-center gap-2">
-              <Mail size={16} className="text-gray-500" />
-              <span>{booking.email}</span>
+          <div className="mt-2 flex items-center gap-3 text-sm text-gray-400">
+            <div className="flex items-center gap-1">
+              <Mail size={14} />
+              {booking.email}
             </div>
 
             <button
-              type="button"
               onClick={copyEmail}
-              className="inline-flex items-center gap-1 rounded-lg border border-[#1A1A1A] px-2 py-1 text-xs text-gray-300 transition hover:bg-white/5"
+              className="flex items-center gap-1 text-xs hover:text-white"
             >
-              <Copy size={14} className="text-gray-500" />
-              {copied ? "Copied!" : "Copy Email"}
+              <Copy size={14} />
+              {copied ? "Copied!" : "Copy"}
             </button>
           </div>
         </div>
 
         <span
-          className={`rounded-full border px-3 py-1 text-xs font-medium capitalize ${statusClasses(
+          className={`rounded-full border px-3 py-1 text-xs ${statusClasses(
             booking.status
           )}`}
         >
@@ -153,167 +143,151 @@ function BookingCard({ booking }: { booking: Booking }) {
         </span>
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
-        <div className="space-y-3 text-sm">
-          <div>
-            <p className="text-gray-500">Service</p>
-            <p className="font-medium text-white">{booking.serviceType}</p>
-          </div>
+      <div className="mt-5 grid md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <p className="text-gray-500">Service</p>
+          <p className="text-white">{booking.serviceType}</p>
 
-          <div>
-            <p className="text-gray-500">Home Size</p>
-            <p className="font-medium text-white">{booking.homeSize}</p>
-          </div>
+          <p className="text-gray-500 mt-2">Home</p>
+          <p className="text-white">{booking.homeSize}</p>
 
-          <div>
-            <p className="text-gray-500">Estimate</p>
-            <p className="font-medium text-white">${booking.priceEstimate}</p>
-          </div>
+          <p className="text-gray-500 mt-2">Estimate</p>
+          <p className="text-white">${booking.priceEstimate}</p>
         </div>
 
-        <div className="space-y-3 text-sm">
-          <div>
-            <p className="text-gray-500">Date & Time</p>
-            <div className="flex items-center gap-2 font-semibold text-white">
-              <Calendar size={16} className="text-[#1ed760]" />
-              <span>
-                {booking.date} · {booking.time}
-              </span>
-            </div>
+        <div>
+          <p className="text-gray-500">Schedule</p>
+          <div className="flex items-center gap-2 text-white font-semibold">
+            <Calendar size={16} className="text-[#1ed760]" />
+            {booking.date} · {booking.time}
           </div>
 
-          <div>
-            <p className="text-gray-500">Phone</p>
-            <a
-              href={`tel:${booking.phone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-medium text-gray-200 underline decoration-transparent underline-offset-4 transition hover:text-[#1ed760] hover:decoration-[#1ed760]/40"
-            >
-              <Phone size={16} className="text-gray-500" />
-              <span>{formatPhone(booking.phone)}</span>
-            </a>
-          </div>
+          <p className="text-gray-500 mt-2">Phone</p>
+          <a
+            href={`tel:${booking.phone}`}
+            target="_blank"
+            className="flex items-center gap-2 hover:text-[#1ed760]"
+          >
+            <Phone size={16} />
+            {booking.phone}
+          </a>
 
-          <div>
-            <p className="text-gray-500">Address</p>
-            <a
-              href={mapsLink(booking.address)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-start gap-2 underline decoration-transparent underline-offset-4 transition hover:text-[#1ed760] hover:decoration-[#1ed760]/40"
-            >
-              <MapPin size={16} className="mt-0.5 shrink-0 text-gray-500" />
-              <span className="font-medium text-gray-200">{booking.address}</span>
-              <ExternalLink
-                size={16}
-                className="mt-0.5 shrink-0 text-gray-500"
-              />
-            </a>
-          </div>
+          <p className="text-gray-500 mt-2">Address</p>
+          <a
+            href={mapsLink(booking.address)}
+            target="_blank"
+            className="flex items-center gap-2 hover:text-[#1ed760]"
+          >
+            <MapPin size={16} />
+            {booking.address}
+            <ExternalLink size={14} />
+          </a>
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-[#1A1A1A] pt-4">
-        <button
-          type="button"
-          className="rounded-xl border border-[#1ed760] px-4 py-2 text-sm font-medium text-[#1ed760] transition hover:bg-[#1ed760]/10"
-        >
-          Confirm
-        </button>
+      <div className="mt-5 flex gap-3 border-t border-[#1A1A1A] pt-4">
+        {booking.status === "pending" && (
+          <>
+            <button
+              onClick={() => onUpdateStatus(booking.id, "confirmed")}
+              className="border border-[#1ed760] px-4 py-2 rounded-xl text-[#1ed760]"
+            >
+              Confirm
+            </button>
 
-        <button
-          type="button"
-          className="rounded-xl bg-[#1ed760] px-4 py-2 text-sm font-medium text-black transition hover:brightness-110"
-        >
-          Complete
-        </button>
+            <button
+              onClick={() => onUpdateStatus(booking.id, "cancelled")}
+              className="text-gray-400"
+            >
+              Cancel
+            </button>
+          </>
+        )}
 
-        <button
-          type="button"
-          className="rounded-xl px-2 py-2 text-sm text-gray-400 transition hover:text-white"
-        >
-          Cancel
-        </button>
+        {booking.status === "confirmed" && (
+          <>
+            <button
+              onClick={() => onUpdateStatus(booking.id, "completed")}
+              className="bg-[#1ed760] text-black px-4 py-2 rounded-xl"
+            >
+              Complete
+            </button>
+
+            <button
+              onClick={() => onUpdateStatus(booking.id, "cancelled")}
+              className="text-gray-400"
+            >
+              Cancel
+            </button>
+          </>
+        )}
       </div>
     </article>
   );
 }
 
 export default function AdminDashboard() {
-  const [filter, setFilter] = useState<FilterValue>("all");
+  const [filter, setFilter] = useState<FilterValue>("pending");
+  const [bookings, setBookings] = useState(initialBookings);
 
-  const filteredBookings = useMemo(() => {
-    if (filter === "all") return mockBookings;
-    return mockBookings.filter((booking) => booking.status === filter);
-  }, [filter]);
+  function updateStatus(id: string, status: BookingStatus) {
+    setBookings((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, status } : b))
+    );
+  }
+
+  const filtered = useMemo(() => {
+    if (filter === "all") return bookings;
+    return bookings.filter((b) => b.status === filter);
+  }, [bookings, filter]);
+
+  const stats = useMemo(() => {
+    const pending = bookings.filter((b) => b.status === "pending").length;
+    const confirmed = bookings.filter((b) => b.status === "confirmed").length;
+    const revenue = bookings
+      .filter((b) => b.status === "completed")
+      .reduce((sum, b) => sum + b.priceEstimate, 0);
+
+    return { pending, confirmed, revenue };
+  }, [bookings]);
 
   return (
     <div className="min-h-screen bg-[#030303] text-white">
-      <div className="border-b border-[#1A1A1A]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-8">
-            <div className="text-lg font-semibold">BrightNest Admin</div>
-
-            <nav className="flex items-center gap-5 text-sm">
-              <button className="text-white">Bookings</button>
-              <button className="text-gray-500 hover:text-white">
-                Settings
-              </button>
-            </nav>
-          </div>
-
-          <div className="text-sm text-gray-500">
-            {filteredBookings.length} visible
-          </div>
-        </div>
+      <div className="border-b border-[#1A1A1A] px-6 py-4 flex justify-between">
+        <h1 className="font-semibold">Admin Dashboard</h1>
       </div>
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mb-6 flex flex-wrap items-center gap-3">
+      <div className="px-6 py-4 flex gap-6 text-sm">
+        <div>Pending: {stats.pending}</div>
+        <div>Confirmed: {stats.confirmed}</div>
+        <div>Revenue: ${stats.revenue}</div>
+      </div>
+
+      <div className="px-6 flex gap-3 mb-4">
+        {["pending", "confirmed", "all"].map((f) => (
           <button
-            type="button"
-            onClick={() => setFilter("all")}
-            className={`rounded-full border px-4 py-2 text-sm ${
-              filter === "all"
-                ? "border-white/15 bg-white/10 text-white"
-                : "border-[#1A1A1A] text-gray-400 hover:text-white"
+            key={f}
+            onClick={() => setFilter(f as FilterValue)}
+            className={`px-4 py-2 rounded-full border ${
+              filter === f
+                ? "bg-white/10 border-white/20"
+                : "border-[#1A1A1A]"
             }`}
           >
-            All
+            {f}
           </button>
+        ))}
+      </div>
 
-          <button
-            type="button"
-            onClick={() => setFilter("pending")}
-            className={`rounded-full border px-4 py-2 text-sm ${
-              filter === "pending"
-                ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
-                : "border-[#1A1A1A] text-gray-400 hover:text-white"
-            }`}
-          >
-            Pending
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFilter("confirmed")}
-            className={`rounded-full border px-4 py-2 text-sm ${
-              filter === "confirmed"
-                ? "border-[#1ed760]/30 bg-[#1ed760]/10 text-[#1ed760]"
-                : "border-[#1A1A1A] text-gray-400 hover:text-white"
-            }`}
-          >
-            Confirmed
-          </button>
-        </div>
-
-        <div className="grid gap-4">
-          {filteredBookings.map((booking) => (
-            <BookingCard key={booking.id} booking={booking} />
-          ))}
-        </div>
-      </main>
+      <div className="px-6 grid gap-4 pb-10">
+        {filtered.map((b) => (
+          <BookingCard
+            key={b.id}
+            booking={b}
+            onUpdateStatus={updateStatus}
+          />
+        ))}
+      </div>
     </div>
   );
 }
