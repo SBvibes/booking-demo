@@ -5,7 +5,7 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import TestimonialGrid from "@/components/TestimonialGrid";
 import CTA from "@/components/CTA";
 import ContactSection from "@/components/ContactSection";
-
+import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="min-h-screen bg-white text-gray-900 transition-colors dark:bg-[#111317] dark:text-[#f3f4f6]">
@@ -16,6 +16,7 @@ export default function Home() {
       <TestimonialGrid />
       <CTA />
       <ContactSection />
+      <Footer />
     </main>
   );
 }
