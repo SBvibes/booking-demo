@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
+import { useEffect, useMemo, useState } from "react";
 import {
   Calendar,
   CheckCircle2,
@@ -12,10 +13,12 @@ import {
   ExternalLink,
   Mail,
   MapPin,
+  Moon,
   Phone,
   RotateCcw,
   Settings,
   Sparkles,
+  Sun,
 } from "lucide-react";
 
 type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
@@ -93,13 +96,13 @@ const initialBookings: Booking[] = [
 function statusBadgeClasses(status: BookingStatus) {
   switch (status) {
     case "pending":
-      return "border-yellow-500/25 bg-yellow-500/10 text-yellow-300";
+      return "border-yellow-500/25 bg-yellow-500/10 text-yellow-700 dark:text-yellow-300";
     case "confirmed":
-      return "border-[#1ed760]/25 bg-[#1ed760]/10 text-[#1ed760]";
+      return "border-[#1ed760]/25 bg-[#1ed760]/10 text-[#148a3f] dark:text-[#1ed760]";
     case "completed":
-      return "border-blue-500/25 bg-blue-500/10 text-blue-300";
+      return "border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-300";
     case "cancelled":
-      return "border-red-500/25 bg-red-500/10 text-red-300";
+      return "border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300";
   }
 }
 
@@ -122,18 +125,18 @@ function MetricCard({
   return (
     <motion.div
       layout
-      className="flex h-[84px] items-center justify-between rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] px-5"
+      className="flex h-[84px] items-center justify-between rounded-2xl border border-gray-200 bg-white px-5 shadow-sm dark:border-[#1A1A1A] dark:bg-[#0A0A0A] dark:shadow-none"
     >
       <div>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500 dark:text-gray-500">
           {label}
         </p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight text-white">
+        <p className="mt-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
           {value}
         </p>
       </div>
 
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#1A1A1A] bg-white/[0.03] text-[#1ed760]">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-[#1ed760] dark:border-[#1A1A1A] dark:bg-white/[0.03]">
         {icon}
       </div>
     </motion.div>
@@ -188,11 +191,12 @@ function BookingCard({
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.22 }}
       className={[
-        "relative rounded-2xl border border-[#1A1A1A] bg-[#0A0A0A] p-5",
+        "relative rounded-2xl border bg-white p-5 shadow-sm dark:bg-[#0A0A0A] dark:shadow-none",
+        "border-gray-200 dark:border-[#1A1A1A]",
         isCancelled ? "opacity-40" : "",
         isCompleted
           ? "shadow-[0_0_0_1px_rgba(59,130,246,0.06),0_0_18px_rgba(59,130,246,0.10)]"
-          : "shadow-[0_10px_30px_rgba(0,0,0,0.22)]",
+          : "",
       ].join(" ")}
     >
       <span
@@ -204,20 +208,22 @@ function BookingCard({
       </span>
 
       <div className="pr-28">
-        <h3 className="text-lg font-semibold text-white">{booking.customerName}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {booking.customerName}
+        </h3>
 
-        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-400">
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
           <div className="inline-flex items-center gap-2">
-            <Mail size={16} className="text-gray-500" />
+            <Mail size={16} className="text-gray-400 dark:text-gray-500" />
             <span>{booking.email}</span>
           </div>
 
           <button
             type="button"
             onClick={handleCopyEmail}
-            className="inline-flex items-center gap-1 rounded-lg border border-[#1A1A1A] bg-white/[0.02] px-2.5 py-1 text-xs text-gray-300 transition hover:bg-white/[0.05] hover:text-white"
+            className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-gray-700 transition hover:bg-gray-100 dark:border-[#1A1A1A] dark:bg-white/[0.02] dark:text-gray-300 dark:hover:bg-white/[0.05] dark:hover:text-white"
           >
-            <Copy size={14} className="text-gray-500" />
+            <Copy size={14} className="text-gray-400 dark:text-gray-500" />
             {copied ? "Copied!" : "Copy Email"}
           </button>
         </div>
@@ -225,25 +231,29 @@ function BookingCard({
 
       <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_1.1fr_auto]">
         <div className="grid gap-4 text-sm">
-          <div className="rounded-xl border border-[#1A1A1A] bg-white/[0.02] p-3">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#1A1A1A] dark:bg-white/[0.02]">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">
               Service
             </p>
-            <p className="mt-2 font-medium text-white">{booking.serviceType}</p>
+            <p className="mt-2 font-medium text-gray-900 dark:text-white">
+              {booking.serviceType}
+            </p>
           </div>
 
-          <div className="rounded-xl border border-[#1A1A1A] bg-white/[0.02] p-3">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#1A1A1A] dark:bg-white/[0.02]">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">
               Home Size
             </p>
-            <p className="mt-2 font-medium text-white">{booking.homeSize}</p>
+            <p className="mt-2 font-medium text-gray-900 dark:text-white">
+              {booking.homeSize}
+            </p>
           </div>
 
-          <div className="rounded-xl border border-[#1A1A1A] bg-white/[0.02] p-3">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#1A1A1A] dark:bg-white/[0.02]">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">
               Estimate
             </p>
-            <div className="mt-2 inline-flex items-center gap-2 font-medium text-white">
+            <div className="mt-2 inline-flex items-center gap-2 font-medium text-gray-900 dark:text-white">
               <DollarSign size={16} className="text-[#1ed760]" />
               <span>${booking.priceEstimate}</span>
             </div>
@@ -251,11 +261,11 @@ function BookingCard({
         </div>
 
         <div className="grid gap-4 text-sm">
-          <div className="rounded-xl border border-[#1A1A1A] bg-white/[0.02] p-3">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#1A1A1A] dark:bg-white/[0.02]">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">
               Schedule
             </p>
-            <div className="mt-2 inline-flex items-center gap-2 font-semibold text-white">
+            <div className="mt-2 inline-flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
               <Calendar size={16} className="text-[#1ed760]" />
               <span>
                 {booking.date} · {booking.time}
@@ -263,7 +273,7 @@ function BookingCard({
             </div>
           </div>
 
-          <div className="rounded-xl border border-[#1A1A1A] bg-white/[0.02] p-3">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#1A1A1A] dark:bg-white/[0.02]">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">
               Phone
             </p>
@@ -271,14 +281,14 @@ function BookingCard({
               href={`tel:${booking.phone}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-2 font-medium text-gray-200 underline decoration-transparent underline-offset-4 transition hover:text-[#1ed760] hover:decoration-[#1ed760]/45"
+              className="mt-2 inline-flex items-center gap-2 font-medium text-gray-700 underline decoration-transparent underline-offset-4 transition hover:text-[#1ed760] hover:decoration-[#1ed760]/45 dark:text-gray-200"
             >
-              <Phone size={16} className="text-gray-500" />
+              <Phone size={16} className="text-gray-400 dark:text-gray-500" />
               <span>{formatPhone(booking.phone)}</span>
             </a>
           </div>
 
-          <div className="rounded-xl border border-[#1A1A1A] bg-white/[0.02] p-3">
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-[#1A1A1A] dark:bgwhite/[0.02] dark:bg-white/[0.02]">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">
               Address
             </p>
@@ -290,11 +300,13 @@ function BookingCard({
               rel="noopener noreferrer"
               className="mt-2 inline-flex items-start gap-2 underline decoration-transparent underline-offset-4 transition hover:text-[#1ed760] hover:decoration-[#1ed760]/45"
             >
-              <MapPin size={16} className="mt-0.5 shrink-0 text-gray-500" />
-              <span className="font-medium text-gray-200">{booking.address}</span>
+              <MapPin size={16} className="mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
+              <span className="font-medium text-gray-700 dark:text-gray-200">
+                {booking.address}
+              </span>
               <ExternalLink
                 size={16}
-                className="mt-0.5 shrink-0 text-gray-500"
+                className="mt-0.5 shrink-0 text-gray-400 dark:text-gray-500"
               />
             </a>
           </div>
@@ -314,7 +326,7 @@ function BookingCard({
               <button
                 type="button"
                 onClick={handleCancel}
-                className="rounded-xl px-4 py-2.5 text-sm text-gray-400 transition hover:bg-white/[0.04] hover:text-white"
+                className="rounded-xl px-4 py-2.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.04] dark:hover:text-white"
               >
                 Cancel
               </button>
@@ -334,7 +346,7 @@ function BookingCard({
               <button
                 type="button"
                 onClick={handleCancel}
-                className="rounded-xl px-4 py-2.5 text-sm text-gray-400 transition hover:bg-white/[0.04] hover:text-white"
+                className="rounded-xl px-4 py-2.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/[0.04] dark:hover:text-white"
               >
                 Cancel
               </button>
@@ -345,7 +357,7 @@ function BookingCard({
             <button
               type="button"
               onClick={() => onRestoreToPending(booking.id)}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/[0.05]"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-900 transition hover:bg-gray-100 dark:border-white/10 dark:text-white dark:hover:bg-white/[0.05]"
             >
               <RotateCcw size={16} className="text-[#1ed760]" />
               Restore to Pending
@@ -360,6 +372,25 @@ function BookingCard({
 export default function AdminDashboard() {
   const [filter, setFilter] = useState<FilterValue>("pending");
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark" || saved === "light") {
+      setTheme(saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
+    } else {
+      setTheme("light");
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("theme", nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+  }
 
   function updateStatus(id: string, nextStatus: BookingStatus) {
     setBookings((prev) =>
@@ -392,8 +423,8 @@ export default function AdminDashboard() {
   }, [bookings]);
 
   return (
-    <div className="min-h-screen bg-[#030303] text-white">
-      <header className="border-b border-[#1A1A1A]">
+    <div className="min-h-screen bg-[#f5f7fb] text-gray-900 transition-colors dark:bg-[#030303] dark:text-white">
+      <header className="border-b border-gray-200 dark:border-[#1A1A1A]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-8">
             <div className="text-lg font-semibold tracking-tight">
@@ -401,17 +432,31 @@ export default function AdminDashboard() {
             </div>
 
             <nav className="flex items-center gap-5 text-sm">
-              <button className="text-white">Bookings</button>
-              <button className="inline-flex items-center gap-2 text-gray-500 transition hover:text-white">
+              <button className="text-gray-900 dark:text-white">Bookings</button>
+              <Link
+                href="/settings"
+                className="inline-flex items-center gap-2 text-gray-500 transition hover:text-gray-900 dark:hover:text-white"
+              >
                 <Settings size={16} />
                 Settings
-              </button>
+              </Link>
             </nav>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#1A1A1A] bg-white/[0.02] px-3 py-1.5 text-xs text-gray-400">
-            <Clock3 size={14} className="text-[#1ed760]" />
-            Live workflow view
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-50 dark:border-[#1A1A1A] dark:bg-white/[0.03] dark:text-gray-200 dark:hover:bg-white/[0.05]"
+            >
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === "dark" ? "Light mode" : "Dark mode"}
+            </button>
+
+            <div className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-500 dark:border-[#1A1A1A] dark:bg-white/[0.02] dark:text-gray-400">
+              <Clock3 size={14} className="text-[#1ed760]" />
+              Live workflow view
+            </div>
           </div>
         </div>
       </header>
@@ -443,8 +488,8 @@ export default function AdminDashboard() {
               onClick={() => setFilter(value)}
               className={`rounded-full border px-4 py-2 text-sm capitalize transition ${
                 filter === value
-                  ? "border-white/15 bg-white/10 text-white"
-                  : "border-[#1A1A1A] text-gray-400 hover:text-white"
+                  ? "border-[#1ed760]/30 bg-[#1ed760]/10 text-[#148a3f] dark:text-[#1ed760]"
+                  : "border-gray-300 bg-white text-gray-600 hover:text-gray-900 dark:border-[#1A1A1A] dark:bg-transparent dark:text-gray-400 dark:hover:text-white"
               }`}
             >
               {value}
